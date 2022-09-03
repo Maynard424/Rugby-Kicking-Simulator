@@ -1,0 +1,97 @@
+GlowScript 3.1 VPython 
+
+scene.title = "Rugby Projectiles Simulator"
+ 
+ 
+scene.caption = " Vary the Direction of Kick: \n\n"
+
+scene.append_to_caption('Set Direction          ')
+def setdirection(s):
+    wt1.text = '{:1.2f}'.format(s.value)
+   
+direcsl = slider(min=-1, max=1, value=0, length=200, bind=setdirection, right=15, pos = scene.caption_anchor)
+
+wt1 = wtext(text='{:1.2f}'.format(direcsl.value))   #Creates a slider for direction and stores the value
+
+scene.append_to_caption('\n\n')
+
+
+scene.append_to_caption('Set x position         ')
+def setxpos(x):
+    wt2.text = '{:1.2f}'.format(x.value)
+   
+xpossl = slider(min=-25, max=25, value=0, length=200, bind=setxpos, right=15)
+
+wt2 = wtext(text='{:1.2f}'.format(xpossl.value))   #Creates a slider for x position and stores the value
+
+scene.append_to_caption('\n\n')
+
+
+scene.append_to_caption('Set z position         ')
+def setzpos(z):
+    wt3.text = '{:1.2f}'.format(z.value)
+   
+zpossl = slider(min=-35, max=35, value=0, length=200, bind=setzpos, right=15)
+
+wt3 = wtext(text='{:1.2f}'.format(zpossl.value))   #Creates a slider for z position and stores the value
+
+scene.append_to_caption('\n\n')
+ 
+
+scene.append_to_caption('Set Initial Velocity  ')
+def setvel(v):
+    wt4.text = '{:1.2f}'.format(v.value)
+   
+velsl = slider(min=1, max=40, value=20, length=200, bind=setvel, right=15)
+
+wt4 = wtext(text='{:1.2f}'.format(velsl.value))   #Creates a slider for initial velocity and stores the value
+
+scene.append_to_caption('\n\n')
+
+
+scene.append_to_caption('Set Angle                ')
+def setang(a):
+    wt5.text = '{:1.2f}'.format(a.value)
+   
+angsl = slider(min=1, max=90, value=45, length=200, bind=setang, right=15)
+
+wt5 = wtext(text='{:1.2f}'.format(angsl.value))   #Creates a slider for angle and stores the value
+
+scene.append_to_caption('\n\n')
+
+
+def draw():
+  ground = box(pos=vector(0,-.1,0), size=vector(72,.2,70),color=color.green) #Creates a ground surface of 70m x 72m
+  zpos = zpossl.value
+  xpos = xpossl.value
+  direction = direcsl.value
+  power = velsl.value
+  ang = angsl.value
+  ball = sphere(pos=vector(xpos,.1,zpos),radius=.1, color = color.white, make_trail=True) #Creates a ball to be kicked
+  r0 = ball.pos
+  g = vector(0,-9.8,0)
+  ball.m = 0.435
+ 
+  leftpost = box(pos=vector(25,5,-2.8), size=vector(.5,10,.5), color = color.white)
+  rightpost = box(pos=vector(25,5,2.8), size=vector(.5,10,.5), color = color.white) #Creates rugby posts
+  midpost = box(pos=vector(25,3.2,0), size=vector(.5,.5,5.6), color = color.white)
+ 
+  theta = ang*pi/180 #makes angle a radian
+  ball.p = ball.m*power*vector(cos(theta),sin(theta),direction) #Creates direction vector
+ 
+  t = 0
+  dt = 0.01 #differential of time
+ 
+  while ball.pos.y>=.1: #checks ball doesn't fall below ground
+    rate(100)
+    Force=ball.m*g
+    ball.p=ball.p+Force*dt                    #prints graph
+    ball.pos=ball.pos+ball.p*dt/ball.m
+    t=t+dt
+ 
+   
+  print('Final Vector (x,y,z) =',ball.pos-r0,' m')
+  print('Flight Time =',t,' s')
+
+
+button(text="Print Projectile", pos=scene.caption_anchor, bind=draw)
